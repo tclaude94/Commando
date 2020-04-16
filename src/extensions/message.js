@@ -207,7 +207,7 @@ module.exports = Structures.extend('Message', Message => {
 					 * (if applicable - see {@link Command#run})
 					 */
 					this.client.emit('commandCancel', this.command, collResult.cancelled, this, collResult);
-					return this.reply('Cancelled command.');
+					return this.reply('Commande annulée.');
 				}
 				args = collResult.values;
 			}
@@ -219,6 +219,8 @@ module.exports = Structures.extend('Message', Message => {
 			const typingCount = this.channel.typingCount;
 			try {
 				this.client.emit('debug', `Running command ${this.command.groupID}:${this.command.memberName}.`);
+				if(this.command.triggerMessageDelete)
+					await this.delete();
 				const promise = this.command.run(this, args, fromPattern, collResult);
 				/**
 				 * Emitted when running a command

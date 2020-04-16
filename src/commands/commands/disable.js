@@ -6,21 +6,21 @@ module.exports = class DisableCommandCommand extends Command {
 		super(client, {
 			name: 'disable',
 			aliases: ['disable-command', 'cmd-off', 'command-off'],
-			group: 'commands',
+			group: 'admin',
 			memberName: 'disable',
-			description: 'Disables a command or command group.',
+			description: 'Désactive une commande ou un groupe de commandes.',
 			details: oneLine`
-				The argument must be the name/ID (partial or whole) of a command or command group.
-				Only administrators may use this command.
+				L'argument doit être le nom/ID de la commande ou d'un groupe de commandes.
+				Seuls les administrateurs peuvent exécuter cette commande.
 			`,
-			examples: ['disable util', 'disable Utility', 'disable prefix'],
+			examples: ['disable divers', 'disable prefix'],
 			guarded: true,
 
 			args: [
 				{
 					key: 'cmdOrGrp',
-					label: 'command/group',
-					prompt: 'Which command or group would you like to disable?',
+					label: 'commande/groupe',
+					prompt: 'Quelle commande ou quel groupe de commandes voulez-vous désactiver?',
 					type: 'group|command'
 				}
 			]
@@ -34,16 +34,16 @@ module.exports = class DisableCommandCommand extends Command {
 
 	run(msg, args) {
 		if(!args.cmdOrGrp.isEnabledIn(msg.guild, true)) {
-			return msg.reply(
-				`The \`${args.cmdOrGrp.name}\` ${args.cmdOrGrp.group ? 'command' : 'group'} is already disabled.`
+			return msg.channel.send(
+				`${args.cmdOrGrp.group ? 'La commande' : 'Le groupe de commandes'} \`${args.cmdOrGrp.name}\` est déjà désactivé${group ? 'e' : ''}.`
 			);
 		}
 		if(args.cmdOrGrp.guarded) {
-			return msg.reply(
-				`You cannot disable the \`${args.cmdOrGrp.name}\` ${args.cmdOrGrp.group ? 'command' : 'group'}.`
+			return msg.channel.send(
+				`Tu ne peux pas désactiver \`${args.cmdOrGrp.name}\` ${args.cmdOrGrp.group ? 'cette commande' : 'ce groupe'}.`
 			);
 		}
 		args.cmdOrGrp.setEnabledIn(msg.guild, false);
-		return msg.reply(`Disabled the \`${args.cmdOrGrp.name}\` ${args.cmdOrGrp.group ? 'command' : 'group'}.`);
+		return msg.channel.send(`${args.cmdOrGrp.group ? 'La commande' : 'Le groupe de commandes'} \`${args.cmdOrGrp.name}\` a été désactivé${group ? 'e' : ''}.`);
 	}
 };

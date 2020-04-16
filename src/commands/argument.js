@@ -178,11 +178,11 @@ class Argument {
 			}
 
 			// Prompt the user for a new value
-			prompts.push(await msg.reply(stripIndents`
-				${empty ? this.prompt : valid ? valid : `You provided an invalid ${this.label}. Please try again.`}
+			prompts.push(await msg.channel.send(stripIndents`
+				${empty ? this.prompt : valid ? valid : `Une valeur incorrecte a été entrée pour ${this.label}. Essaye de nouveau.`}
 				${oneLine`
-					Respond with \`cancel\` to cancel the command.
-					${wait ? `The command will automatically be cancelled in ${this.wait} seconds.` : ''}
+					Répond par \`annuler\` pour annuler la commande.
+					${wait ? `La commande va automatiquement être annulée dans ${this.wait} secondes.` : ''}
 				`}
 			`));
 
@@ -206,7 +206,7 @@ class Argument {
 			}
 
 			// See if they want to cancel
-			if(val.toLowerCase() === 'cancel') {
+			if(val.toLowerCase() === 'annuler') {
 				return {
 					value: null,
 					cancelled: 'user',
@@ -263,23 +263,23 @@ class Argument {
 				// Prompt the user for a new value
 				if(val) {
 					const escaped = escapeMarkdown(val).replace(/@/g, '@\u200b');
-					prompts.push(await msg.reply(stripIndents`
+					prompts.push(await msg.channel.send(stripIndents`
 						${valid ? valid : oneLine`
-							You provided an invalid ${this.label},
-							"${escaped.length < 1850 ? escaped : '[too long to show]'}".
-							Please try again.
+							Une valeur incorrecte a été entrée pour ${this.label},
+							"${escaped.length < 1850 ? escaped : '[...]'}".
+							Essaye de nouveau.
 						`}
 						${oneLine`
-							Respond with \`cancel\` to cancel the command, or \`finish\` to finish entry up to this point.
-							${wait ? `The command will automatically be cancelled in ${this.wait} seconds.` : ''}
+							Répond par \`annuler\` pour annuler la commande ou par \`finish\` pour finir.
+							${wait ? `La commande va automatiquement être annulée dans ${this.wait} secondes.` : ''}
 						`}
 					`));
 				} else if(results.length === 0) {
-					prompts.push(await msg.reply(stripIndents`
+					prompts.push(await msg.channel.send(stripIndents`
 						${this.prompt}
 						${oneLine`
-							Respond with \`cancel\` to cancel the command, or \`finish\` to finish entry.
-							${wait ? `The command will automatically be cancelled in ${this.wait} seconds, unless you respond.` : ''}
+							Répond par \`annuler\` pour annuler la commande ou par \`finish\` pour finir.
+							${wait ? `La commande va automatiquement être annulée dans ${this.wait} secondes. Sauf si tu réponds` : ''}
 						`}
 					`));
 				}
@@ -313,7 +313,7 @@ class Argument {
 						answers
 					};
 				}
-				if(lc === 'cancel') {
+				if(lc === 'annuler') {
 					return {
 						value: null,
 						cancelled: 'user',

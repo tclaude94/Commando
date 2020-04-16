@@ -5,22 +5,22 @@ module.exports = class PrefixCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'prefix',
-			group: 'util',
+			group: 'admin',
 			memberName: 'prefix',
-			description: 'Shows or sets the command prefix.',
+			description: 'Affiche ou change le préfixe.',
 			format: '[prefix/"default"/"none"]',
 			details: oneLine`
-				If no prefix is provided, the current prefix will be shown.
-				If the prefix is "default", the prefix will be reset to the bot's default prefix.
-				If the prefix is "none", the prefix will be removed entirely, only allowing mentions to run commands.
-				Only administrators may change the prefix.
+				Si aucun préfixe n'est donné, le préfixe actuel est affiché.
+				Si le préfixe est "default", le préfixe sera remis par défaut.
+				Si le préfixe est "none", le préfixe sera retiré et seules les mentions seront possibles pour utiliser les commandes.
+				Seuls les administrateurs peuvent modifier le préfixe.
 			`,
 			examples: ['prefix', 'prefix -', 'prefix omg!', 'prefix default', 'prefix none'],
 
 			args: [
 				{
 					key: 'prefix',
-					prompt: 'What would you like to set the bot\'s prefix to?',
+					prompt: 'Quel préfixe voulez-vous utiliser?',
 					type: 'string',
 					max: 15,
 					default: ''
@@ -33,19 +33,19 @@ module.exports = class PrefixCommand extends Command {
 		// Just output the prefix
 		if(!args.prefix) {
 			const prefix = msg.guild ? msg.guild.commandPrefix : this.client.commandPrefix;
-			return msg.reply(stripIndents`
-				${prefix ? `The command prefix is \`\`${prefix}\`\`.` : 'There is no command prefix.'}
-				To run commands, use ${msg.anyUsage('command')}.
+			return msg.channel.send(stripIndents`
+				${prefix ? `Le préfixe actuel est \`\`${prefix}\`\`.` : `Aucun préfixé n'est attribué.`}
+				Pour utiliser les commandes, utilisez ${msg.anyUsage('commande')}.
 			`);
 		}
 
 		// Check the user's permission before changing anything
 		if(msg.guild) {
 			if(!msg.member.hasPermission('ADMINISTRATOR') && !this.client.isOwner(msg.author)) {
-				return msg.reply('Only administrators may change the command prefix.');
+				return msg.channel.send('Seuls les administrateurs peuvent modifier le préfixe.');
 			}
 		} else if(!this.client.isOwner(msg.author)) {
-			return msg.reply('Only the bot owner(s) may change the global command prefix.');
+			return msg.channel.send('Seul le gérant de bot peut modifier le préfixe global.');
 		}
 
 		// Save the prefix
@@ -54,14 +54,14 @@ module.exports = class PrefixCommand extends Command {
 		let response;
 		if(lowercase === 'default') {
 			if(msg.guild) msg.guild.commandPrefix = null; else this.client.commandPrefix = null;
-			const current = this.client.commandPrefix ? `\`\`${this.client.commandPrefix}\`\`` : 'no prefix';
-			response = `Reset the command prefix to the default (currently ${current}).`;
+			const current = this.client.commandPrefix ? `\`\`${this.client.commandPrefix}\`\`` : 'aucun préfixe';
+			response = `Remise par défaut du préfixe (actuellement ${current}).`;
 		} else {
 			if(msg.guild) msg.guild.commandPrefix = prefix; else this.client.commandPrefix = prefix;
-			response = prefix ? `Set the command prefix to \`\`${args.prefix}\`\`.` : 'Removed the command prefix entirely.';
+			response = prefix ? `Modification du préfixe en \`\`${args.prefix}\`\`.` : 'Le préfixe a été supprimé.';
 		}
 
-		await msg.reply(`${response} To run commands, use ${msg.anyUsage('command')}.`);
+		await msg.channel.send(`${response} Pour utiliser les commandes, utilisez ${msg.anyUsage('commande')}.`);
 		return null;
 	}
 };

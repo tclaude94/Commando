@@ -6,21 +6,21 @@ module.exports = class EnableCommandCommand extends Command {
 		super(client, {
 			name: 'enable',
 			aliases: ['enable-command', 'cmd-on', 'command-on'],
-			group: 'commands',
+			group: 'admin',
 			memberName: 'enable',
-			description: 'Enables a command or command group.',
+			description: 'Active une commande ou un groupe de commandes.',
 			details: oneLine`
-				The argument must be the name/ID (partial or whole) of a command or command group.
-				Only administrators may use this command.
+				L'argument doit être le nom/ID de la commande ou d'un groupe de commandes.
+				Seuls les administrateurs peuvent exécuter cette commande.
 			`,
-			examples: ['enable util', 'enable Utility', 'enable prefix'],
+			examples: ['enable divers', 'enable prefix'],
 			guarded: true,
 
 			args: [
 				{
 					key: 'cmdOrGrp',
-					label: 'command/group',
-					prompt: 'Which command or group would you like to enable?',
+					label: 'commande/groupe',
+					prompt: 'Quelle commande ou quel groupe de commandes voulez-vous activer?',
 					type: 'group|command'
 				}
 			]
@@ -35,19 +35,19 @@ module.exports = class EnableCommandCommand extends Command {
 	run(msg, args) {
 		const group = args.cmdOrGrp.group;
 		if(args.cmdOrGrp.isEnabledIn(msg.guild, true)) {
-			return msg.reply(
-				`The \`${args.cmdOrGrp.name}\` ${args.cmdOrGrp.group ? 'command' : 'group'} is already enabled${
+			return msg.channel.send(
+				`${args.cmdOrGrp.group ? 'La commande' : 'Le groupe'} \`${args.cmdOrGrp.name}\` est déjà activé${group ? 'e' : ''}${
 					group && !group.isEnabledIn(msg.guild) ?
-					`, but the \`${group.name}\` group is disabled, so it still can't be used` :
+					`, mais le groupe \`${group.name}\` est désactivé, donc la commande reste désactivée.` :
 					''
 				}.`
 			);
 		}
 		args.cmdOrGrp.setEnabledIn(msg.guild, true);
-		return msg.reply(
-			`Enabled the \`${args.cmdOrGrp.name}\` ${group ? 'command' : 'group'}${
+		return msg.channel.send(
+			`${group ? 'La commande' : 'Le groupe'} \`${args.cmdOrGrp.name}\` a été activé${group ? 'e' : ''}${
 				group && !group.isEnabledIn(msg.guild) ?
-				`, but the \`${group.name}\` group is disabled, so it still can't be used` :
+				`, mais le groupe \`${group.name}\` est désactivé, donc la commande reste désactivée.` :
 				''
 			}.`
 		);

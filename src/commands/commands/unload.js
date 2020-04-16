@@ -8,10 +8,10 @@ module.exports = class UnloadCommandCommand extends Command {
 			aliases: ['unload-command'],
 			group: 'commands',
 			memberName: 'unload',
-			description: 'Unloads a command.',
+			description: 'Décharge une commande.',
 			details: oneLine`
-				The argument must be the name/ID (partial or whole) of a command.
-				Only the bot owner(s) may use this command.
+				L'argument doit être le nom/ID de la commande.
+				Seul le créateur du bot peut utiliser cette commande.
 			`,
 			examples: ['unload some-command'],
 			ownerOnly: true,
@@ -20,7 +20,7 @@ module.exports = class UnloadCommandCommand extends Command {
 			args: [
 				{
 					key: 'command',
-					prompt: 'Which command would you like to unload?',
+					prompt: 'Quelle commande voulez-vous décharger?',
 					type: 'command'
 				}
 			]
@@ -36,14 +36,14 @@ module.exports = class UnloadCommandCommand extends Command {
 					if(this.shard.id !== ${this.client.shard.id}) this.registry.commands.get('${args.command.name}').unload();
 				`);
 			} catch(err) {
-				this.client.emit('warn', `Error when broadcasting command unload to other shards`);
+				this.client.emit('warn', `Erreur lors de la réplication du déchargement sur tous les shards`);
 				this.client.emit('error', err);
-				await msg.reply(`Unloaded \`${args.command.name}\` command, but failed to unload on other shards.`);
+				await msg.channel.send(`La commande \`${cmdOrGrp.name}\` a été déchargée, mais il y à eu une erreur lors de la réplication sur les shards.`);
 				return null;
 			}
 		}
 
-		await msg.reply(`Unloaded \`${args.command.name}\` command${this.client.shard ? ' on all shards' : ''}.`);
+		await msg.channel.send(`La commande \`${command.name}\` a été déchargée${this.client.shard ? ' sur tous les shards' : ''}.`);
 		return null;
 	}
 };

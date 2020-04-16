@@ -7,12 +7,12 @@ module.exports = class LoadCommandCommand extends Command {
 		super(client, {
 			name: 'load',
 			aliases: ['load-command'],
-			group: 'commands',
+			group: 'admin',
 			memberName: 'load',
-			description: 'Loads a new command.',
+			description: 'Charge une nouvelle commande.',
 			details: oneLine`
-				The argument must be full name of the command in the format of \`group:memberName\`.
-				Only the bot owner(s) may use this command.
+				L'argument doit être le nom de la commande au format \`group:memberName\`.
+				Seul le créateur du bot peut utiliser cette commande.
 			`,
 			examples: ['load some-command'],
 			ownerOnly: true,
@@ -21,13 +21,13 @@ module.exports = class LoadCommandCommand extends Command {
 			args: [
 				{
 					key: 'command',
-					prompt: 'Which command would you like to load?',
+					prompt: 'Quelle commande veux-tu charger?',
 					validate: val => new Promise(resolve => {
 						if(!val) return resolve(false);
 						const split = val.split(':');
 						if(split.length !== 2) return resolve(false);
 						if(this.client.registry.findCommands(val).length > 0) {
-							return resolve('That command is already registered.');
+							return resolve('La commande est déjà enregistrée.');
 						}
 						const cmdPath = this.client.registry.resolveCommandPath(split[0], split[1]);
 						fs.access(cmdPath, fs.constants.R_OK, err => err ? resolve(false) : resolve(true));
@@ -58,14 +58,14 @@ module.exports = class LoadCommandCommand extends Command {
 					}
 				`);
 			} catch(err) {
-				this.client.emit('warn', `Error when broadcasting command load to other shards`);
+				this.client.emit('warn', `Erreur lors de la réplication du chargement sur tous les shards`);
 				this.client.emit('error', err);
-				await msg.reply(`Loaded \`${command.name}\` command, but failed to load on other shards.`);
+				await msg.channel.send(`La commande \`${command.name}\` a été chargée, mais il y à eu une erreur lors de la réplication sur les shards.`);
 				return null;
 			}
 		}
 
-		await msg.reply(`Loaded \`${command.name}\` command${this.client.shard ? ' on all shards' : ''}.`);
+		await msg.channel.send(`La commande \`${command.name}\` a été chargée${this.client.shard ? ' sur tous les shards' : ''}.`);
 		return null;
 	}
 };

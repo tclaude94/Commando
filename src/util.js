@@ -4,7 +4,7 @@ function escapeRegex(str) {
 
 function disambiguation(items, label, property = 'name') {
 	const itemList = items.map(item => `"${(property ? item[property] : item).replace(/ /g, '\xa0')}"`).join(',   ');
-	return `Multiple ${label} found, please be more specific: ${itemList}`;
+	return `Plusieurs ${label} ont été trouvés, merci d'être plus précis: ${itemList}`;
 }
 
 function paginate(items, page = 1, pageLength = 10) {

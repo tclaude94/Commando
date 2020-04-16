@@ -7,7 +7,7 @@ module.exports = class PingCommand extends Command {
 			name: 'ping',
 			group: 'util',
 			memberName: 'ping',
-			description: 'Checks the bot\'s ping to the Discord server.',
+			description: 'Check le ping du Bot vers le serveur Discord.',
 			throttling: {
 				usages: 5,
 				duration: 10
@@ -16,13 +16,13 @@ module.exports = class PingCommand extends Command {
 	}
 
 	async run(msg) {
-		const pingMsg = await msg.reply('Pinging...');
+		const pingMsg = await msg.channel.send('Ping...');
 		return pingMsg.edit(oneLine`
 			${msg.channel.type !== 'dm' ? `${msg.author},` : ''}
-			Pong! The message round-trip took ${
+			Pong! Le message a pris ${
 				(pingMsg.editedTimestamp || pingMsg.createdTimestamp) - (msg.editedTimestamp || msg.createdTimestamp)
 			}ms.
-			${this.client.ws.ping ? `The heartbeat ping is ${Math.round(this.client.ws.ping)}ms.` : ''}
+			${this.client.ws.ping ? `La requête au serveur Discord a pris ${Math.round(this.client.ws.ping)}ms.` : ''}
 		`);
 	}
 };

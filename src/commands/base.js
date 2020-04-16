@@ -47,6 +47,7 @@ class Command {
 	 * @property {RegExp[]} [patterns] - Patterns to use for triggering the command
 	 * @property {boolean} [guarded=false] - Whether the command should be protected from disabling
 	 * @property {boolean} [hidden=false] - Whether the command should be hidden from the help command
+	 * @property {boolean} [triggerMessageDelete=true] - Whether the trigger message should be deleted
 	 * @property {boolean} [unknown=false] - Whether the command should be run when an unknown command is used - there
 	 * may only be one command registered with this property as `true`.
 	 */
@@ -221,6 +222,12 @@ class Command {
 		this.hidden = Boolean(info.hidden);
 
 		/**
+		 * Whether the trigger message should be deleted
+		 * @type {boolean}
+		 */
+		this.triggerMessageDelete = 'triggerMessageDelete' in info ? info.triggerMessageDelete : true;
+
+		/**
 		 * Whether the command will be run when an unknown command is used
 		 * @type {boolean}
 		 */
@@ -304,27 +311,27 @@ class Command {
 	onBlock(message, reason, data) {
 		switch(reason) {
 			case 'guildOnly':
-				return message.reply(`The \`${this.name}\` command must be used in a server channel.`);
+				return message.channel.send(`La commande \`${this.name}\` doit être utiliser dans un serveur.`);
 			case 'nsfw':
-				return message.reply(`The \`${this.name}\` command can only be used in NSFW channels.`);
+				return message.channel.send(`La commande \`${this.name}\` doit être utiliser dans un canal NSFW.`);
 			case 'permission': {
-				if(data.response) return message.reply(data.response);
-				return message.reply(`You do not have permission to use the \`${this.name}\` command.`);
+				if(data.response) return message.channel.send(data.response);
+				return message.channel.send(`Tu n'as pas la permission pour utiliser la commande \`${this.name}\`.`);
 			}
 			case 'clientPermissions': {
 				if(data.missing.length === 1) {
-					return message.reply(
-						`I need the "${permissions[data.missing[0]]}" permission for the \`${this.name}\` command to work.`
+					return message.channel.send(
+						`J'ai besoin de la permission "${permissions[data.missing[0]]}" pour que la commande \`${this.name}\` fonctionne.`
 					);
 				}
-				return message.reply(oneLine`
-					I need the following permissions for the \`${this.name}\` command to work:
+				return message.channel.send(oneLine`
+					J'ai besoin des permissions suivantes pour la commande \`${this.name}\` fonctionne:
 					${data.missing.map(perm => permissions[perm]).join(', ')}
 				`);
 			}
 			case 'throttling': {
-				return message.reply(
-					`You may not use the \`${this.name}\` command again for another ${data.remaining.toFixed(1)} seconds.`
+				return message.channel.send(
+					`Tu ne peux pas utiliser la commande \`${this.name}\` avant ${data.remaining.toFixed(1)} secondes.`
 				);
 			}
 			default:
@@ -350,10 +357,10 @@ class Command {
 		}).join(owners.length > 2 ? ', ' : ' ') : '';
 
 		const invite = this.client.options.invite;
-		return message.reply(stripIndents`
-			An error occurred while running the command: \`${err.name}: ${err.message}\`
-			You shouldn't ever receive an error like this.
-			Please contact ${ownerList || 'the bot owner'}${invite ? ` in this server: ${invite}` : '.'}
+		return message.channel.send(stripIndents`
+			Une erreur est survenue lors de l'exécution de la commande: \`${err.name}: ${err.message}\`
+			Tu n'aurais pas dû recevoir cette erreur.
+			Peux-tu s'il te plaît contacte ${ownerList || 'le créateur du bot'}${invite ? ` sur son serveur: ${invite}` : '.'}
 		`);
 	}
 

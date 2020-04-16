@@ -7,13 +7,13 @@ class StringArgumentType extends ArgumentType {
 
 	validate(val, msg, arg) {
 		if(arg.oneOf && !arg.oneOf.includes(val.toLowerCase())) {
-			return `Please enter one of the following options: ${arg.oneOf.map(opt => `\`${opt}\``).join(', ')}`;
+			return `Entrez une des options suivantes: ${arg.oneOf.map(opt => `\`${opt}\``).join(', ')}`;
 		}
 		if(arg.min !== null && typeof arg.min !== 'undefined' && val.length < arg.min) {
-			return `Please keep the ${arg.label} above or exactly ${arg.min} characters.`;
+			return `Le nombre de caractères de l'argument ${arg.label} doit être supérieur ou égal à ${arg.min} caractères.`;
 		}
 		if(arg.max !== null && typeof arg.max !== 'undefined' && val.length > arg.max) {
-			return `Please keep the ${arg.label} below or exactly ${arg.max} characters.`;
+			return `Le nombre de caractères de l'argument ${arg.label} doit être inférieur ou égal à ${arg.max} caractères.`;
 		}
 		return true;
 	}

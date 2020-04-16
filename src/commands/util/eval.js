@@ -11,16 +11,16 @@ module.exports = class EvalCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'eval',
-			group: 'util',
+			group: 'admin',
 			memberName: 'eval',
-			description: 'Executes JavaScript code.',
-			details: 'Only the bot owner(s) may use this command.',
+			description: 'Exécute du code JavaScript. (BOT OWNER)',
+			details: 'Seulement le créateur du bot peut utiliser cette commande.',
 			ownerOnly: true,
 
 			args: [
 				{
 					key: 'script',
-					prompt: 'What code would you like to evaluate?',
+					prompt: 'Quel code évaluer?',
 					type: 'string'
 				}
 			]

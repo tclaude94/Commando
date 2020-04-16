@@ -6,9 +6,9 @@ module.exports = class UnloadCommandCommand extends Command {
 		super(client, {
 			name: 'unload',
 			aliases: ['unload-command'],
-			group: 'commands',
+			group: 'admin',
 			memberName: 'unload',
-			description: 'Décharge une commande.',
+			description: 'Décharge une commande. (BOT OWNER)',
 			details: oneLine`
 				L'argument doit être le nom/ID de la commande.
 				Seul le créateur du bot peut utiliser cette commande.

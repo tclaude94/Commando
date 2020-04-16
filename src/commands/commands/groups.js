@@ -23,7 +23,7 @@ module.exports = class ListGroupsCommand extends Command {
 		return msg.channel.send(stripIndents`
 			__**Groupes**__
 			${this.client.registry.groups.map(grp =>
-				`**${grp.name}:** ${grp.isEnabledIn(msg.guild) ? 'Activé' : 'Désactivé'}`
+				`**${grp.name}:** ${grp.isEnabledIn(msg.guild) ? ':green_circle:' : ':red_circle:'}`
 			).join('\n')}
 		`);
 	}

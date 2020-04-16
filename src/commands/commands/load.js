@@ -9,7 +9,7 @@ module.exports = class LoadCommandCommand extends Command {
 			aliases: ['load-command'],
 			group: 'admin',
 			memberName: 'load',
-			description: 'Charge une nouvelle commande.',
+			description: 'Charge une nouvelle commande. (BOT OWNER)',
 			details: oneLine`
 				L'argument doit être le nom de la commande au format \`group:memberName\`.
 				Seul le créateur du bot peut utiliser cette commande.
